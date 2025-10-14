@@ -4,7 +4,7 @@ require_once '../autoload.php';
 use src\Repository\PostoRepository;
 
 $postoRepo = new PostoRepository();
-$postos = $postoRepo->findAll();
+$postos = $postoRepo->findAllWithCombustiveis();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -85,12 +85,12 @@ $postos = $postoRepo->findAll();
                     <input type="text" id="add_nome" name="nome" required>
                 </div>
                 <div class="form-group">
-                    <label for="add_cnpj">CNPJ</label>
-                    <input type="text" id="add_cnpj" name="cnpj" required>
-                </div>
-                <div class="form-group">
                     <label for="add_endereco">Endereço</label>
                     <input type="text" id="add_endereco" name="endereco" required>
+                </div>
+                <div class="form-group">
+                    <label for="add_coordenadas">Coordenadas</label>
+                    <input placeholder="Ex: 123.42343, -123.12324" type="text" id="add_coordenadas" name="coordenadas" required>
                 </div>
                 <button type="submit" class="btn primary">Adicionar</button>
             </form>
@@ -112,12 +112,12 @@ $postos = $postoRepo->findAll();
                     <input type="text" id="edit_nome" name="nome" required>
                 </div>
                 <div class="form-group">
-                    <label for="edit_cnpj">CNPJ</label>
-                    <input type="text" id="edit_cnpj" name="cnpj" required>
-                </div>
-                <div class="form-group">
                     <label for="edit_endereco">Endereço</label>
                     <input type="text" id="edit_endereco" name="endereco" required>
+                </div>
+                <div class="form-group">
+                    <label for="add_coordenadas">Coordenadas</label>
+                    <input placeholder="Ex: 123.42343, -123.12324" type="text" id="add_coordenadas" name="coordenadas" required>
                 </div>
                 <button type="submit" class="btn primary">Guardar Alterações</button>
             </form>

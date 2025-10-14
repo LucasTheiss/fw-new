@@ -1,40 +1,33 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../autoload.php';
+require_once '../../autoload.php';
 
 use src\Repository\SolicitacaoRepository;
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 3) {
-    header('Location: ../../index.php');
+$action = $_GET['action'] ?? null;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if (!$action || $id <= 0) {
+    header('Location: ../solicitacoes.php');
     exit;
 }
 
-$repository = new SolicitacaoRepository();
-$action = $_REQUEST['action'] ?? '';
-$id = (int)($_REQUEST['id'] ?? 0);
-$result = ['success' => false, 'message' => 'Ação ou ID inválido.'];
+$solicitacaoRepo = new SolicitacaoRepository();
+$success = false;
 
-function setAlert($title, $text, $icon) {
+if ($action === 'approve') {
+    $success = $solicitacaoRepo->approve($id);
     $_SESSION['alert'] = [
-        'title' => $title, 'text' => $text, 'icon' => $icon, 'confirmButtonColor' => '#2563eb'
+        'title' => $success ? 'Sucesso!' : 'Erro!',
+        'text' => $success ? 'Solicitação aprovada com sucesso.' : 'Falha ao aprovar a solicitação.',
+        'icon' => $success ? 'success' : 'error',
     ];
-}
-
-if ($id > 0) {
-    switch ($action) {
-        case 'approve':
-            $result = $repository->approve($id);
-            break;
-        case 'deny':
-            $result = $repository->deny($id);
-            break;
-    }
-}
-
-if ($result['success']) {
-    setAlert('Sucesso!', $result['message'], 'success');
-} else {
-    setAlert('Erro!', $result['message'], 'warning');
+} elseif ($action === 'deny') {
+    $success = $solicitacaoRepo->deny($id);
+    $_SESSION['alert'] = [
+        'title' => $success ? 'Sucesso!' : 'Erro!',
+        'text' => $success ? 'Solicitação negada com sucesso.' : 'Falha ao negar a solicitação.',
+        'icon' => $success ? 'success' : 'error',
+    ];
 }
 
 header('Location: ../solicitacoes.php');

@@ -2,7 +2,6 @@
 namespace src\Repository;
 
 use Config\Database;
-use PDO;
 use src\Model\Transportadora;
 
 class TransportadoraRepository
