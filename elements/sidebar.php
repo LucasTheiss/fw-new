@@ -7,14 +7,14 @@ $baseUrl = "/FW";
 
 $menuItems = [];
 
-if (isset($_SESSION['gerente']) && $_SESSION['gerente'] == '0' && $_SESSION['adm'] == '0') {
+if (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'motorista') {
     $baseUrl .= "/driver";
     $menuItems = [
         ['href' => "{$baseUrl}/index.php", 'text' => 'Início'],
         ['href' => "{$baseUrl}/postos.php", 'text' => 'Checar Postos'],
         ['href' => "{$baseUrl}/suporte.php", 'text' => 'Suporte']
     ];
-} elseif (isset($_SESSION['gerente']) && $_SESSION['gerente'] == '1') {
+} elseif (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'gerente') {
     $baseUrl .= "/manager";
     $idTransportadora = $_SESSION['idtransportadora'];
     $menuItems = [
@@ -24,7 +24,7 @@ if (isset($_SESSION['gerente']) && $_SESSION['gerente'] == '0' && $_SESSION['adm
         ['href' => "{$baseUrl}/viagens.php?idtransportadora={$idTransportadora}", 'text' => 'Viagens'],
         ['href' => "{$baseUrl}/suporte.php", 'text' => 'Suporte']
     ];
-} elseif (isset($_SESSION['adm']) && $_SESSION['adm'] == '1' || (isset($_SESSION['role']) && $_SESSION['role'] == 3)) {
+} elseif (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'admin') {
     $baseUrl .= "/admin";
     $menuItems = [
         ['href' => "{$baseUrl}/index.php", 'text' => 'Dashboard'],

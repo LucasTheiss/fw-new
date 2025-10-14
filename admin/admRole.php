@@ -1,7 +1,6 @@
 <?php 
     session_start();
-    $_SESSION['id'] = 0;
-    $_SESSION['role'] = 3;
-    $_SESSION['adm'] = '1';
-    header('Location: ../index.php');
+    $_SESSION['user_id'] = 0;
+    $_SESSION['user_role'] = 'admin';
+    header('Location: index.php');
 ?>

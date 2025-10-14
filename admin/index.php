@@ -4,7 +4,7 @@ require_once __DIR__ . '/../autoload.php';
 
 use src\Repository\DashboardRepository;
 
-if (!isset($_SESSION['adm']) || $_SESSION['adm'] != 1) {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
     header('Location: ../index.php');
     exit;
 }
