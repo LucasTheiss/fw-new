@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../autoload.php';
+require_once '../acesso.php';
 
 use src\Repository\PostoRepository;
 use src\Model\Posto;

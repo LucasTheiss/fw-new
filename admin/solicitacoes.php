@@ -1,5 +1,6 @@
 <?php
 require_once '../autoload.php';
+require_once 'acesso.php';
 
 use src\Repository\SolicitacaoRepository;
 

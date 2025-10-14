@@ -1,10 +1,10 @@
 <?php
 require_once '../autoload.php';
+require_once 'acesso.php';
 
 use src\Repository\DenunciaRepository;
 
 $denunciaRepo = new DenunciaRepository();
-// Corrigido para usar o método existente no seu repositório
 $denuncias = $denunciaRepo->findAllWithDetails();
 ?>
 <!DOCTYPE html>
