@@ -53,11 +53,11 @@ $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
                                         <td data-label="Modelo"><input type="text" name="modelo" value="<?= htmlspecialchars($veiculo->modelo) ?>" required></td>
                                         <td data-label="Eixos"><input type="number" name="eixos" value="<?= htmlspecialchars($veiculo->eixos) ?>" required></td>
                                         <td data-label="Litragem"><input type="number" step="0.01" name="litragem" value="<?= htmlspecialchars($veiculo->litragem) ?>" required></td>
-                                        <td data-label="Observação"><input type="text" name="observacao" value="<?= htmlspecialchars($veiculo->observacao) ?>"></td>
+                                        <td data-label="Observação"><input type="text" name="observacao" value="<?= htmlspecialchars($veiculo->observacao ?? '') ?>"></td>
                                         <td data-label="Ações">
                                             <div class="actions">
-                                                <button type="submit" class="btn-icon btn-approve" title="Salvar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#2563eb" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7l-2-4zm-1 16h-8v-4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4zm-1-10H9V5h6v4z"/></svg></button>
-                                                <a href="actions/veiculo_actions.php?action=delete&id=<?= $veiculo->idveiculo ?>" class="btn-icon btn-deny" title="Excluir" onclick="return confirm('Tem certeza?')"><svg class="icon" viewBox="0 0 24 24" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></a>
+                                                <button type="submit" class="btn-icon btn-approve" title="Salvar">&#10003;</button>
+                                                <a href="actions/veiculo_actions.php?action=delete&id=<?= $veiculo->idveiculo ?>" class="btn-icon btn-deny" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este veículo?')">🗑️</a>
                                             </div>
                                         </td>
                                     </form>
@@ -78,11 +78,11 @@ $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
             </div>
             <form action="actions/veiculo_actions.php" method="POST">
                 <input type="hidden" name="action" value="create">
-                <div class="form-group"><label for="placa">Placa</label><input type="text" id="placa" name="placa" required></div>
-                <div class="form-group"><label for="modelo">Modelo</label><input type="text" id="modelo" name="modelo" required></div>
-                <div class="form-group"><label for="eixos">Nº de Eixos</label><input type="number" id="eixos" name="eixos" required></div>
-                <div class="form-group"><label for="litragem">Litragem do Tanque</label><input type="number" step="0.01" id="litragem" name="litragem" required></div>
-                <div class="form-group"><label for="observacao">Observação</label><input type="text" id="observacao" name="observacao"></div>
+                <div class="form-group"><label>Placa</label><input type="text" name="placa" required></div>
+                <div class="form-group"><label>Modelo</label><input type="text" name="modelo" required></div>
+                <div class="form-group"><label>Nº de Eixos</label><input type="number" name="eixos" required></div>
+                <div class="form-group"><label>Litragem do Tanque</label><input type="number" step="0.01" name="litragem" required></div>
+                <div class="form-group"><label>Observação</label><input type="text" name="observacao"></div>
                 <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
                     <button type="button" class="btn" onclick="closeModal('addVeiculoModal')">Cancelar</button>
                     <button type="submit" class="btn primary">Salvar Veículo</button>

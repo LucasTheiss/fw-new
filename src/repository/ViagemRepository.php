@@ -8,6 +8,12 @@ class ViagemRepository
 {
     private $conn;
 
+    // Definição dos status para consistência
+    const STATUS_AGENDADA = 0;
+    const STATUS_EM_CURSO = 1;
+    const STATUS_FINALIZADA = 2;
+    const STATUS_CANCELADA = 3;
+
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
@@ -26,10 +32,10 @@ class ViagemRepository
     {
         $sql = "SELECT v.*, u.nome as motorista_nome, ve.placa as veiculo_placa
                 FROM viagem v
-                JOIN usuario u ON v.idmotorista = u.idusuario
+                JOIN usuario u ON v.idusuario = u.idusuario
                 JOIN veiculo ve ON v.idveiculo = ve.idveiculo
-                WHERE u.idtransportadora = ?
-                ORDER BY v.data_partida DESC";
+                WHERE ve.idtransportadora = ?
+                ORDER BY v.data_inicio DESC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $idtransportadora);
@@ -40,36 +46,37 @@ class ViagemRepository
 
     public function create(Viagem $viagem): bool
     {
-        $sql = "INSERT INTO viagem (idveiculo, idmotorista, origem, destino, distancia_km, data_partida, status) 
-                VALUES (?, ?, ?, ?, ?, ?, 'agendada')";
+        $sql = "INSERT INTO viagem (idusuario, idveiculo, data_inicio, endereco_origem, endereco_destino, carga, peso, obs, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param(
-            "iissds",
+            "iissssdsi",
+            $viagem->idusuario,
             $viagem->idveiculo,
-            $viagem->idmotorista,
-            $viagem->origem,
-            $viagem->destino,
-            $viagem->distancia_km,
-            $viagem->data_partida
+            $viagem->data_inicio,
+            $viagem->endereco_origem,
+            $viagem->endereco_destino,
+            $viagem->carga,
+            $viagem->peso,
+            $viagem->obs,
+            self::STATUS_AGENDADA
         );
         return $stmt->execute();
     }
 
-    public function updateStatus(int $idviagem, string $status): bool
+    public function updateStatus(int $idviagem, int $status): bool
     {
         $sql = "UPDATE viagem SET status = ?";
-        $params = [$status];
-
-        if ($status === 'finalizada') {
-            $sql .= ", data_chegada = CURRENT_TIMESTAMP";
+        
+        if ($status === self::STATUS_FINALIZADA) {
+            $sql .= ", data_termino = NOW()";
         }
         
         $sql .= " WHERE idviagem = ?";
-        $params[] = $idviagem;
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(str_repeat('s', count($params)-1) . 'i', ...$params);
+        $stmt->bind_param("ii", $status, $idviagem);
         return $stmt->execute();
     }
 }
