@@ -5,86 +5,135 @@ use Config\Database;
 use src\Model\User;
 use src\Model\Gerente;
 use src\Model\Motorista;
-use src\Factory\UserFactory;
+use src\Model\Admin;
 
 class UsuarioRepository
 {
-    private $db;
+    private $conn;
 
     public function __construct()
     {
-        $this->db = Database::getInstance()->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
+    }
+
+    public function findById(int $idusuario): ?array
+    {
+        $stmt = $this->conn->prepare("SELECT idusuario, nome, email, cpf, telefone FROM usuario WHERE idusuario = ?");
+        $stmt->bind_param("i", $idusuario);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
     public function findByEmail(string $email): ?array
     {
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE email = ?");
-        if (!$stmt) return null;
-
+        $stmt = $this->conn->prepare("SELECT u.*, tu.idtransportadora FROM usuario u LEFT JOIN transportadora_usuario tu ON u.idusuario = tu.idusuario WHERE u.email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $data = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-
-        return $data ?: null;
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
-
-    public function create(User $user, int $idtransportadora = null): ?int
+    
+    public function findByCpfOrEmail(string $cpf, string $email, int $excludeId = 0): ?array
     {
-        $sql = "INSERT INTO usuario (email, nome, senha, telefone, cpf, gerente, adm, idtransportadora)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) return null;
-
-        $email = $user->email;
-        $nome = $user->nome;
-        $senha = password_hash($user->senha, PASSWORD_DEFAULT);
-        $telefone = $user->telefone;
-        $cpf = $user->cpf;
-        $gerente = $user instanceof Gerente ? 1 : 0;
-        $adm = property_exists($user, 'adm') && $user->adm ? 1 : 0;
-        $idtransp = $idtransportadora;
-
-        $stmt->bind_param(
-            "ssssiiii",
-            $email,
-            $nome,
-            $senha,
-            $telefone,
-            $cpf,
-            $gerente,
-            $adm,
-            $idtransp
-        );
-
-        $success = $stmt->execute();
-        $insertId = $success ? $this->db->insert_id : null;
-        $stmt->close();
-
-        return $insertId;
-    }
-
-    public function findMotoristasByTransportadora(int $idtransportadora): array
-    {
-        $sql = "SELECT * FROM usuario JOIN transportadora_usuario tu ON tu.idusuario = usuario.idusuario WHERE idtransportadora = ? AND gerente = 0 AND adm = 0";
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) return [];
-
-        $stmt->bind_param("i", $idtransportadora);
+        $sql = "SELECT idusuario FROM usuario WHERE (cpf = ? OR email = ?)";
+        if ($excludeId > 0) {
+            $sql .= " AND idusuario != ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ssi", $cpf, $email, $excludeId);
+        } else {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ss", $cpf, $email);
+        }
         $stmt->execute();
         $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
 
-        $motoristas = [];
-        while ($row = $result->fetch_assoc()) {
-            $motorista = new Motorista();
-            foreach ($row as $key => $value) {
-                $motorista->$key = $value;
-            }
-            $motoristas[] = $motorista;
+    public function create(User $user, int $idtransportadora): bool
+    {
+        $this->conn->begin_transaction();
+        try {
+            $hashed_password = password_hash($user->senha, PASSWORD_DEFAULT);
+            $gerente_flag = 0; // Sempre 0 para motorista
+            $admin_flag = 0;
+
+            $stmt_user = $this->conn->prepare("INSERT INTO usuario (email, nome, senha, telefone, cpf, gerente, adm) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt_user->bind_param("sssssii", $user->email, $user->nome, $hashed_password, $user->telefone, $user->cpf, $gerente_flag, $admin_flag);
+            
+            if (!$stmt_user->execute()) throw new \Exception("Falha ao criar usuário.");
+            
+            $idusuario = $this->conn->insert_id;
+
+            $stmt_link = $this->conn->prepare("INSERT INTO transportadora_usuario (idusuario, idtransportadora, datalogin) VALUES (?, ?, ?)");
+            $data = date('Y-m-d');
+            $stmt_link->bind_param("iis", $idusuario, $idtransportadora, $data);
+            if (!$stmt_link->execute()) throw new \Exception("Falha ao vincular usuário à transportadora.");
+
+            $this->conn->commit();
+            return true;
+        } catch (\Exception $e) {
+            $this->conn->rollback();
+            return false;
         }
+    }
 
-        $stmt->close();
-        return $motoristas;
+    public function update(User $user): bool
+    {
+        // Se uma nova senha for fornecida, criptografe-a. Caso contrário, mantenha a antiga.
+        if (!empty($user->senha)) {
+            $hashed_password = password_hash($user->senha, PASSWORD_DEFAULT);
+            $sql = "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, senha = ? WHERE idusuario = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("sssssi", $user->nome, $user->email, $user->cpf, $user->telefone, $hashed_password, $user->idusuario);
+        } else {
+            $sql = "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ? WHERE idusuario = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ssssi", $user->nome, $user->email, $user->cpf, $user->telefone, $user->idusuario);
+        }
+        
+        return $stmt->execute();
+    }
+
+    public function delete(int $idusuario, int $idtransportadora): bool
+    {
+        // Garante que só se pode deletar um usuário da própria transportadora
+        $this->conn->begin_transaction();
+        try {
+            $stmt_link = $this->conn->prepare("DELETE FROM transportadora_usuario WHERE idusuario = ? AND idtransportadora = ?");
+            $stmt_link->bind_param("ii", $idusuario, $idtransportadora);
+            $stmt_link->execute();
+
+            // Verifica se o vínculo foi realmente removido antes de deletar o usuário
+            if ($stmt_link->affected_rows > 0) {
+                $stmt_user = $this->conn->prepare("DELETE FROM usuario WHERE idusuario = ?");
+                $stmt_user->bind_param("i", $idusuario);
+                $stmt_user->execute();
+            } else {
+                throw new \Exception("Usuário não pertence a esta transportadora.");
+            }
+            
+            $this->conn->commit();
+            return true;
+        } catch (\Exception $e) {
+            $this->conn->rollback();
+            return false;
+        }
+    }
+    
+    public function findIntegrantesByTransportadora(int $idtransportadora): array
+    {
+        $sql = "SELECT u.idusuario, u.nome, u.email, u.telefone, u.cpf 
+                FROM usuario u
+                JOIN transportadora_usuario tu ON u.idusuario = tu.idusuario
+                WHERE tu.idtransportadora = ? AND u.gerente = 0 
+                ORDER BY u.nome";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $idtransportadora);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }

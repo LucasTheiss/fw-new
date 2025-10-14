@@ -1,8 +1,7 @@
 <?php
 namespace src\Repository;
 
-use Config\Database;
-use PDO;
+use config\Database;
 use src\Model\Veiculo;
 
 class VeiculoRepository
@@ -16,26 +15,35 @@ class VeiculoRepository
 
     public function findByTransportadora(int $idtransportadora): array
     {
-        $sql = "SELECT * FROM veiculo WHERE idtransportadora = :idtransportadora";
+        $sql = "SELECT * FROM veiculo WHERE idtransportadora = ?";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':idtransportadora' => $idtransportadora]);
-        return $stmt->fetchAll(PDO::FETCH_CLASS, Veiculo::class);
+        $stmt->bind_param("i", $idtransportadora);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $veiculos = [];
+        while ($row = $result->fetch_object(Veiculo::class)) {
+            $veiculos[] = $row;
+        }
+        $stmt->close();
+        return $veiculos;
     }
 
     public function create(Veiculo $veiculo): bool
     {
         $sql = "INSERT INTO veiculo (idtransportadora, marca, modelo, ano, placa, capacidade_tanque) 
-                VALUES (:idtransportadora, :marca, :modelo, :ano, :placa, :capacidade_tanque)";
-        
+                VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-
-        return $stmt->execute([
-            ':idtransportadora' => $veiculo->idtransportadora,
-            ':marca' => $veiculo->marca,
-            ':modelo' => $veiculo->modelo,
-            ':ano' => $veiculo->ano,
-            ':placa' => $veiculo->placa,
-            ':capacidade_tanque' => $veiculo->capacidade_tanque
-        ]);
+        $stmt->bind_param(
+            "isssis",
+            $veiculo->idtransportadora,
+            $veiculo->marca,
+            $veiculo->modelo,
+            $veiculo->ano,
+            $veiculo->placa,
+            $veiculo->capacidade_tanque
+        );
+        $success = $stmt->execute();
+        $stmt->close();
+        return $success;
     }
 }
