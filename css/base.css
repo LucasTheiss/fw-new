@@ -1,0 +1,134 @@
+/* ==========================================================================
+   1. ROOT VARIABLES & GLOBAL RESET
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+:root {
+    /* Colors */
+    --primary-blue: #2563eb;
+    --primary-blue-dark: #1e40af;
+    --primary-green: #10b981;
+    --text-dark: #1f2937;
+    --text-light: #4b5563;
+    --text-disabled: #9ca3af;
+    --bg-light: #f3f4f6;
+    --bg-white: #ffffff;
+    --border-color: #d1d5db;
+    --danger-red: #dc2626;
+    --success-green: #16a34a;
+
+    /* Badge Colors */
+    --badge-pending-bg: #fffbea;
+    --badge-pending-border: #ffdf74;
+    --badge-pending-text: #b77039;
+    --badge-denied-bg: #ffdada;
+    --badge-denied-border: #ff7474;
+    --badge-denied-text: #af4d4d;
+    --badge-success-bg: #dbffda;
+    --badge-success-border: #8eff74;
+    --badge-success-text: #4daf54;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+/* ==========================================================================
+   2. MAIN LAYOUT (Sidebar, Header, Content)
+   ========================================================================== */
+.sidebar {
+    width: 250px;
+    height: 100%;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+    background-color: var(--primary-blue-dark);
+    z-index: 1000;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-left: 250px; /* Space for the sidebar */
+    flex-grow: 1;
+}
+
+.content {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.row{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+/* Responsive Layout */
+@media screen and (max-width: 1062px) {
+    .sidebar {
+        display: none;
+    }
+    .main {
+        padding-left: 0;
+    }
+    .content {
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+.page-header {
+    margin-bottom: 20px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.page-header p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+a {
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
