@@ -1,17 +1,26 @@
 <?php
 session_start();
 require_once '../../autoload.php';
-require_once '../admRole.php'; // Garante que apenas o admin pode executar estas ações
 
 use src\Repository\PostoRepository;
+use src\Model\Posto;
 
 $action = $_POST['action'] ?? $_GET['action'] ?? null;
 $postoRepo = new PostoRepository();
 $redirect_url = '../postos.php';
+$posto = new Posto();
+$posto->idposto = $_POST['id'] ?? null;
+$posto->nome = $_POST['nome'] ?? null;
+$posto->endereco = $_POST['endereco'] ?? null;
+$coordenadas = $_POST['coordenadas'] ?? null;
+if ($coordenadas) {
+    list($posto->latitude, $posto->longitude) = array_map('trim', explode(',', $coordenadas));
+}
+
 
 switch ($action) {
     case 'create':
-        $success = $postoRepo->create($_POST);
+        $success = $postoRepo->save($posto);
         $_SESSION[$success ? 'success_message' : 'error_message'] = $success ? "Posto registado com sucesso!" : "Erro ao registar o posto.";
         break;
 
@@ -21,7 +30,7 @@ switch ($action) {
             $_SESSION['error_message'] = "ID do posto não fornecido.";
             break;
         }
-        $success = $postoRepo->update($id, $_POST);
+        $success = $postoRepo->update($posto);
         $_SESSION[$success ? 'success_message' : 'error_message'] = $success ? "Posto atualizado com sucesso!" : "Erro ao atualizar o posto.";
         break;
 
