@@ -14,12 +14,17 @@ $viagemService = new ViagemService();
 try {
     switch ($action) {
         case 'create':
+
             $viagem = new Viagem();
             $viagem->idusuario = (int)$_POST['idusuario'];
             $viagem->idveiculo = (int)$_POST['idveiculo'];
             $viagem->data_inicio = $_POST['data_inicio'];
             $viagem->endereco_origem = $_POST['endereco_origem'];
+            $viagem->latitude_origem = (float)$_POST['latitude_origem'];
+            $viagem->longitude_origem = (float)$_POST['longitude_origem'];
             $viagem->endereco_destino = $_POST['endereco_destino'];
+            $viagem->latitude_destino = (float)$_POST['latitude_destino'];
+            $viagem->longitude_destino = (float)$_POST['longitude_destino'];
             $viagem->carga = $_POST['carga'];
             $viagem->peso = (float)$_POST['peso'];
             $viagem->obs = $_POST['obs'];
@@ -28,9 +33,10 @@ try {
             if ($repo->create($viagem)) {
                 $_SESSION['alert'] = ['title' => 'Sucesso!', 'text' => 'Viagem agendada.', 'icon' => 'success'];
             } else {
-                $_SESSION['alert'] = ['title' => 'Erro!', 'text' => 'Não foi possível agendar a viagem.', 'icon' => 'error'];
+                $_SESSION['alert'] = ['title' => 'Erro!', 'text' => 'Não foi possível agendar. Verifique os dados.', 'icon' => 'error'];
             }
             break;
+
 
         case 'iniciar':
             if ($id > 0) $viagemService->iniciar($id);

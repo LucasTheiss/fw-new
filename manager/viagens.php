@@ -14,7 +14,6 @@ $viagens = $viagemRepo->findByTransportadora($idtransportadora);
 $motoristas = $usuarioRepo->findIntegrantesByTransportadora($idtransportadora);
 $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
 
-// Helper para traduzir status numérico para texto
 function getStatusText(int $status): string {
     return match ($status) {
         ViagemRepository::STATUS_AGENDADA => 'Agendada',
@@ -67,7 +66,7 @@ function getStatusText(int $status): string {
                                     <td data-label="Rota"><?= htmlspecialchars($viagem['endereco_origem']) ?> -> <?= htmlspecialchars($viagem['endereco_destino']) ?></td>
                                     <td data-label="Carga"><?= htmlspecialchars($viagem['carga']) ?> (<?= htmlspecialchars($viagem['peso']) ?> kg)</td>
                                     <td data-label="Motorista/Veículo"><?= htmlspecialchars($viagem['motorista_nome']) ?> / <?= htmlspecialchars($viagem['veiculo_placa']) ?></td>
-                                    <td data-label="Início"><?= date('d/m/Y', strtotime($viagem['data_inicio'])) ?></td>
+                                    <td data-label="Início"><?= date('d/m/Y H:i', strtotime($viagem['data_inicio'])) ?></td>
                                     <td data-label="Ações">
                                         <div class="actions">
                                             <?php if ($viagem['status'] == ViagemRepository::STATUS_AGENDADA): ?>
@@ -95,24 +94,15 @@ function getStatusText(int $status): string {
             </div>
             <form action="actions/viagem_actions.php" method="POST">
                 <input type="hidden" name="action" value="create">
-                <div class="form-group"><label>Motorista</label>
-                    <select name="idusuario" required>
-                        <option value="">Selecione...</option>
-                        <?php foreach ($motoristas as $motorista): ?>
-                            <option value="<?= $motorista['idusuario'] ?>"><?= htmlspecialchars($motorista['nome']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group"><label>Veículo</label>
-                    <select name="idveiculo" required>
-                        <option value="">Selecione...</option>
-                        <?php foreach ($veiculos as $veiculo): ?>
-                            <option value="<?= $veiculo->idveiculo ?>"><?= htmlspecialchars($veiculo->placa . ' - ' . $veiculo->modelo) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group"><label>Endereço de Origem</label><input type="text" name="endereco_origem" required></div>
-                <div class="form-group"><label>Endereço de Destino</label><input type="text" name="endereco_destino" required></div>
+                <input type="hidden" id="latitude_origem" name="latitude_origem">
+                <input type="hidden" id="longitude_origem" name="longitude_origem">
+                <input type="hidden" id="latitude_destino" name="latitude_destino">
+                <input type="hidden" id="longitude_destino" name="longitude_destino">
+
+                <div class="form-group"><label>Motorista</label><select name="idusuario" required><option value="">Selecione...</option><?php foreach ($motoristas as $motorista): ?><option value="<?= $motorista['idusuario'] ?>"><?= htmlspecialchars($motorista['nome']) ?></option><?php endforeach; ?></select></div>
+                <div class="form-group"><label>Veículo</label><select name="idveiculo" required><option value="">Selecione...</option><?php foreach ($veiculos as $veiculo): ?><option value="<?= $veiculo->idveiculo ?>"><?= htmlspecialchars($veiculo->placa . ' - ' . $veiculo->modelo) ?></option><?php endforeach; ?></select></div>
+                <div class="form-group"><label>Endereço de Origem</label><input type="text" id="endereco_origem" name="endereco_origem" required></div>
+                <div class="form-group"><label>Endereço de Destino</label><input type="text" id="endereco_destino" name="endereco_destino" required></div>
                 <div class="form-group"><label>Carga</label><input type="text" name="carga" required></div>
                 <div class="form-group"><label>Peso (kg)</label><input type="number" step="0.01" name="peso" required></div>
                 <div class="form-group"><label>Data de Início</label><input type="datetime-local" name="data_inicio" required></div>
@@ -129,6 +119,30 @@ function getStatusText(int $status): string {
     function openAddModal() { document.getElementById('addViagemModal').style.display = 'block'; }
     function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
     window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = "none"; } }
+
+    // Função para buscar coordenadas a partir de um endereço
+    async function getCoords(endereco, latInput, lonInput) {
+        if (endereco.value.trim() === '') return;
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(endereco.value)}&format=json&limit=1`);
+            const data = await response.json();
+            if (data.length > 0) {
+                latInput.value = data[0].lat;
+                lonInput.value = data[0].lon;
+                console.log(`Coordenadas para ${endereco.id}: ${latInput.value}, ${lonInput.value}`);
+            }
+        } catch (e) {
+            console.error("Erro ao buscar coordenadas:", e);
+        }
+    }
+
+    document.getElementById('endereco_origem').addEventListener('blur', function() {
+        getCoords(this, document.getElementById('latitude_origem'), document.getElementById('longitude_origem'));
+    });
+
+    document.getElementById('endereco_destino').addEventListener('blur', function() {
+        getCoords(this, document.getElementById('latitude_destino'), document.getElementById('longitude_destino'));
+    });
 </script>
 </body>
 </html>

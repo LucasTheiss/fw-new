@@ -8,7 +8,6 @@ class ViagemRepository
 {
     private $conn;
 
-    // Definição dos status para consistência
     const STATUS_AGENDADA = 0;
     const STATUS_EM_CURSO = 1;
     const STATUS_FINALIZADA = 2;
@@ -44,27 +43,6 @@ class ViagemRepository
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function create(Viagem $viagem): bool
-    {
-        $sql = "INSERT INTO viagem (idusuario, idveiculo, data_inicio, endereco_origem, endereco_destino, carga, peso, obs, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-            "iissssdsi",
-            $viagem->idusuario,
-            $viagem->idveiculo,
-            $viagem->data_inicio,
-            $viagem->endereco_origem,
-            $viagem->endereco_destino,
-            $viagem->carga,
-            $viagem->peso,
-            $viagem->obs,
-            self::STATUS_AGENDADA
-        );
-        return $stmt->execute();
-    }
-
     public function updateStatus(int $idviagem, int $status): bool
     {
         $sql = "UPDATE viagem SET status = ?";
@@ -77,6 +55,33 @@ class ViagemRepository
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $status, $idviagem);
+        return $stmt->execute();
+    }
+
+    public function create(Viagem $viagem): bool
+    {
+        $sql = "INSERT INTO viagem (idusuario, idveiculo, data_inicio, endereco_origem, latitude_origem, longitude_origem, endereco_destino, latitude_destino, longitude_destino, carga, peso, obs, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $status = self::STATUS_AGENDADA; 
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param(
+            "iisssdssdsssi",
+            $viagem->idusuario,
+            $viagem->idveiculo,
+            $viagem->data_inicio,
+            $viagem->endereco_origem,
+            $viagem->latitude_origem,
+            $viagem->longitude_origem,
+            $viagem->endereco_destino,
+            $viagem->latitude_destino,
+            $viagem->longitude_destino,
+            $viagem->carga,
+            $viagem->peso,
+            $viagem->obs,
+            $status
+        );
         return $stmt->execute();
     }
 }
