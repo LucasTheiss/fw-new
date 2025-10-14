@@ -21,7 +21,7 @@ switch ($action) {
                 $_SESSION['id_transportadora'] = $user_data['idtransportadora'];
             }
             
-            $redirect_path = '/' . $user_data['role']; // Ex: /admin, /gerente
+            $redirect_path = '/' . $user_data['role'];
             header('Location: ' . $redirect_path);
             exit;
         }
@@ -40,7 +40,7 @@ switch ($action) {
 
         if ($success) {
             $_SESSION['success_message'] = "Registo enviado com sucesso! Aguarde a aprovação.";
-            header('Location: ../login.php');
+            header('Location: ../index.php');
         } else {
             $_SESSION['error_message'] = "Ocorreu um erro no registo. Por favor, tente novamente.";
             header('Location: ../cadastro_transportadora.php');
