@@ -19,9 +19,9 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'motorista') {
     $idTransportadora = $_SESSION['id_transportadora'];
     $menuItems = [
         ['href' => "{$baseUrl}/index.php", 'text' => 'Dashboard'],
-        ['href' => "{$baseUrl}/integrantes.php?idtransportadora={$idTransportadora}", 'text' => 'Integrantes'],
-        ['href' => "{$baseUrl}/veiculos.php?idtransportadora={$idTransportadora}", 'text' => 'Veículos'],
-        ['href' => "{$baseUrl}/viagens.php?idtransportadora={$idTransportadora}", 'text' => 'Viagens'],
+        ['href' => "{$baseUrl}/integrantes.php", 'text' => 'Integrantes'],
+        ['href' => "{$baseUrl}/veiculos.php", 'text' => 'Veículos'],
+        ['href' => "{$baseUrl}/viagens.php", 'text' => 'Viagens'],
         ['href' => "{$baseUrl}/suporte.php", 'text' => 'Suporte']
     ];
 } elseif (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'admin') {

@@ -67,7 +67,7 @@ class UsuarioRepository
 
     public function findMotoristasByTransportadora(int $idtransportadora): array
     {
-        $sql = "SELECT * FROM usuario WHERE idtransportadora = ? AND gerente = 0 AND adm = 0";
+        $sql = "SELECT * FROM usuario JOIN transportadora_usuario tu ON tu.idusuario = usuario.idusuario WHERE idtransportadora = ? AND gerente = 0 AND adm = 0";
         $stmt = $this->db->prepare($sql);
         if (!$stmt) return [];
 

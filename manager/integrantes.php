@@ -4,9 +4,8 @@ require_once 'acesso.php'; // Verificação de sessão
 
 use src\Repository\UsuarioRepository;
 
-// $idtransportadora é obtido do acesso.php
 $usuarioRepo = new UsuarioRepository();
-$integrantes = $usuarioRepo->findIntegrantesByTransportadora($idtransportadora);
+$integrantes = $usuarioRepo->findMotoristasByTransportadora($idtransportadora);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -75,7 +74,7 @@ $integrantes = $usuarioRepo->findIntegrantesByTransportadora($idtransportadora);
                 <h2>Adicionar Novo Integrante</h2>
                 <span class="close" onclick="closeModal('addIntegranteModal')">&times;</span>
             </div>
-            <form action="actions/integrante_actions.php" method="POST">
+            <form action="actions/integrantes_actions.php" method="POST">
                 <input type="hidden" name="action" value="create">
                 
                 <div class="form-group">
