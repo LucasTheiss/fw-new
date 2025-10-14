@@ -238,3 +238,31 @@ tbody tr:last-child td {
     }
     .actions { justify-content: flex-end; }
 }
+
+table {
+    width: 100%;
+    /* border-collapse: collapse; */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+}
+thead {
+    background-color: #f9fafb;
+}
+th, td {
+    padding: 18px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9fafb;
+    font-size: 0.85rem;
+}
+th {
+    font-weight: 500;
+    color: #999;
+}
+tbody tr:hover {
+    background-color: #f1f5f9;
+}
+tbody tr:last-child td {
+    border-bottom: none;
+}

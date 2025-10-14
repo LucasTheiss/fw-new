@@ -41,6 +41,15 @@ class SolicitacaoRepository {
         return $requests;
     }
 
+    public function create(Solicitacao $solicitacao): ?int {
+        $stmt = $this->conn->prepare("INSERT INTO solicitacao (nomeTransportadora, endereco, cidade, estado, cep, cnpj, nomeUsuario, emailUsuario, senha, telefoneUsuario, cpf, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
+        $stmt->bind_param("sssssssssss", $solicitacao->nomeTransportadora, $solicitacao->endereco, $solicitacao->cidade, $solicitacao->estado, $solicitacao->cep, $solicitacao->cnpj, $solicitacao->nomeUsuario, $solicitacao->emailUsuario, $solicitacao->senha, $solicitacao->telefoneUsuario, $solicitacao->cpf);
+        if ($stmt->execute()) {
+            return $this->conn->insert_id;
+        }
+        return null;
+    }
+
     public function approve($idsolicitacao) {
         $solicitacao = $this->findById($idsolicitacao);
         if (!$solicitacao) return ['success' => false, 'message' => 'Solicitação não encontrada.'];

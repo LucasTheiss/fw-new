@@ -7,53 +7,54 @@ use src\Service\RegistrationService;
 
 $action = $_POST['action'] ?? $_GET['action'] ?? null;
 
+if (!$action) {
+    $_SESSION['alert'] = ['title' => 'Erro!', 'text' => 'Ação inválida.', 'icon' => 'error'];
+    header('Location: /FW/login.php');
+    exit;
+}
+
 switch ($action) {
     case 'login':
         $authService = new AuthService();
-        $user_data = $authService->attemptLogin($_POST['email'] ?? '', $_POST['senha'] ?? '');
+        $userData = $authService->attemptLogin($_POST['email'] ?? '', $_POST['senha'] ?? '');
 
-        if ($user_data) {
-            $_SESSION['user_id'] = $user_data['idusuario'];
-            $_SESSION['user_name'] = $user_data['nome'];
-            $_SESSION['user_role'] = $user_data['role'];
-
-            if ($user_data['role'] === 'gerente' || $user_data['role'] === 'motorista') {
-                $_SESSION['id_transportadora'] = $user_data['idtransportadora'];
+        if ($userData) {
+            $_SESSION['user_id'] = $userData['idusuario'];
+            $_SESSION['user_name'] = $userData['nome'];
+            $_SESSION['user_role'] = $userData['role']; 
+            
+            if (isset($userData['idtransportadora'])) {
+                $_SESSION['id_transportadora'] = $userData['idtransportadora'];
             }
             
-            $redirect_path = '/' . $user_data['role'];
-            header('Location: ' . $redirect_path);
+            header('Location: /FW/' . $userData['role'] . '/');
             exit;
         }
 
-        $_SESSION['error_message'] = "E-mail ou senha inválidos.";
-        header('Location: ../login.php');
+        $_SESSION['alert'] = ['title' => 'Erro!', 'text' => 'E-mail ou senha inválidos.', 'icon' => 'error'];
+        header('Location: /FW/login.php');
         exit;
 
     case 'register':
         $registrationService = new RegistrationService();
-        $success = $registrationService->register(
-            $_POST['transportadora'] ?? [],
-            $_POST['gerente'] ?? [],
-            $_FILES['anexos'] ?? []
-        );
+        $success = $registrationService->registerFromForm($_POST);
 
         if ($success) {
-            $_SESSION['success_message'] = "Registo enviado com sucesso! Aguarde a aprovação.";
-            header('Location: ../index.php');
+            unset($_SESSION['form_data']); // Limpa os dados do formulário da sessão
+            $_SESSION['alert'] = ['title' => 'Sucesso!', 'text' => 'Solicitação de cadastro enviada com sucesso! Aguarde a aprovação.', 'icon' => 'success'];
+            header('Location: /FW/login.php');
         } else {
-            $_SESSION['error_message'] = "Ocorreu um erro no registo. Por favor, tente novamente.";
-            header('Location: ../cadastro_transportadora.php');
+            header('Location: /FW/cadastro_transportadora.php');
         }
         exit;
 
     case 'logout':
         session_destroy();
-        header('Location: ../login.php');
+        header('Location: /FW/login.php');
         exit;
 
     default:
-        $_SESSION['error_message'] = "Ação desconhecida.";
-        header('Location: ../login.php');
+        $_SESSION['alert'] = ['title' => 'Erro!', 'text' => 'Ação desconhecida.', 'icon' => 'error'];
+        header('Location: /FW/login.php');
         exit;
 }

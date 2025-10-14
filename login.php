@@ -12,11 +12,12 @@ session_start();
     <main class="auth-container">
         <div class="card" style="max-width: 450px;">
             <div class="card-header">
-                <h1>Aceda à sua conta</h1>
+                <h1>Acesse a sua conta</h1>
                 <p>Digite suas credenciais para continuar.</p>
             </div>
             <form class="card-body" action="actions/auth_actions.php" method="POST">
                 <?php include 'elements/alert.php'; ?>
+                <input type="hidden" name="action" value="login">
                 <div class="form-group">
                     <label for="email">E-mail</label>
                     <input id="email" name="email" type="email" placeholder="seu@email.com" required autocomplete="email" />

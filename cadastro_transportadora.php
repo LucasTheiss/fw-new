@@ -20,6 +20,7 @@ session_start();
             </div>
 
             <form class="form" method="POST" action="actions/auth_actions.php">
+                <input type="hidden" name="action" value="register">
                 <div class="card-body">
                     <?php include('elements/alert.php'); ?>
                     <div class="tabs">
