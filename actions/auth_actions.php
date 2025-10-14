@@ -22,11 +22,15 @@ switch ($action) {
             $_SESSION['user_id'] = $userData['idusuario'];
             $_SESSION['user_name'] = $userData['nome'];
             $_SESSION['user_role'] = $userData['role']; 
+            $_SESSION['id_transportadora'] = $userData['idtransportadora'] ?? 0;
             
-            if (isset($userData['idtransportadora'])) {
-                $_SESSION['id_transportadora'] = $userData['idtransportadora'];
+            if ($userData['role'] != 'admin'){
+                if ($userData['role'] == 'motorista'){
+                    $userData['role'] = 'driver';
+                } else if ($userData['role'] == 'gerente'){
+                    $userData['role'] = 'manager';
+                }
             }
-            
             header('Location: /FW/' . $userData['role'] . '/');
             exit;
         }

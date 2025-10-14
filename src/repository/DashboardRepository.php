@@ -70,7 +70,7 @@ class DashboardRepository {
         $stats['totalVeiculos'] = (int)$result_veiculos['total'];
 
         // Total de Motoristas (usuários que não são gerentes) da transportadora
-        $stmt_motoristas = $this->conn->prepare("SELECT COUNT(*) AS total FROM usuario WHERE idtransportadora = ? AND gerente = 0");
+        $stmt_motoristas = $this->conn->prepare("SELECT COUNT(*) AS total FROM transportadora_usuario tu JOIN usuario ON tu.idusuario = usuario.idusuario  WHERE idtransportadora = ? AND gerente = 0");
         $stmt_motoristas->bind_param("i", $idtransportadora);
         $stmt_motoristas->execute();
         $result_motoristas = $stmt_motoristas->get_result()->fetch_assoc();
@@ -79,8 +79,8 @@ class DashboardRepository {
         // Total de Viagens da transportadora
         $stmt_viagens = $this->conn->prepare(
             "SELECT COUNT(v.idviagem) AS total FROM viagem v
-             JOIN usuario u ON v.idmotorista = u.idusuario
-             WHERE u.idtransportadora = ?"
+             JOIN usuario u ON v.idusuario = u.idusuario JOIN transportadora_usuario tu ON u.idusuario = tu.idusuario
+             WHERE tu.idtransportadora = ?"
         );
         $stmt_viagens->bind_param("i", $idtransportadora);
         $stmt_viagens->execute();

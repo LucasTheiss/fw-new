@@ -16,7 +16,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'motorista') {
     ];
 } elseif (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'gerente') {
     $baseUrl .= "/manager";
-    $idTransportadora = $_SESSION['idtransportadora'];
+    $idTransportadora = $_SESSION['id_transportadora'];
     $menuItems = [
         ['href' => "{$baseUrl}/index.php", 'text' => 'Dashboard'],
         ['href' => "{$baseUrl}/integrantes.php?idtransportadora={$idTransportadora}", 'text' => 'Integrantes'],

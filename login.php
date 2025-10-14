@@ -8,6 +8,7 @@ session_start();
     <?php include 'elements/head.html' ?>
 <body>
     <?php include 'elements/header.php'; ?>
+    <?php include 'elements/alert.php'; ?>
 
     <main class="auth-container">
         <div class="card" style="max-width: 450px;">
@@ -16,7 +17,7 @@ session_start();
                 <p>Digite suas credenciais para continuar.</p>
             </div>
             <form class="card-body" action="actions/auth_actions.php" method="POST">
-                <?php include 'elements/alert.php'; ?>
+                
                 <input type="hidden" name="action" value="login">
                 <div class="form-group">
                     <label for="email">E-mail</label>

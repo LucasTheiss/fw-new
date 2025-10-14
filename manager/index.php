@@ -1,6 +1,6 @@
 <?php
 require_once '../autoload.php';
-require_once 'acesso.php'; // Inclui a verificação de sessão e permissão
+require_once 'acesso.php'; 
 
 use src\Repository\DashboardRepository;
 
