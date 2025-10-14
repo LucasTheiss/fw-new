@@ -1,11 +1,10 @@
 <?php
 require_once '../autoload.php';
-require_once 'acesso.php'; // Verificação de sessão
+require_once 'acesso.php';
 
 use src\Repository\VeiculoRepository;
 
 $veiculoRepo = new VeiculoRepository();
-// Supondo que você tenha um método para buscar veículos por transportadora
 $veiculos = $veiculoRepo->findByTransportadora($idtransportadora); 
 ?>
 <!DOCTYPE html>
@@ -15,10 +14,7 @@ $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
     <?php include_once("../elements/head.html") ?>
 </head>
 <body>
-    <div class="sidebar">
-        <?php include('../elements/sidebar.php') ?>
-    </div>
-
+    <div class="sidebar"><?php include('../elements/sidebar.php') ?></div>
     <div class="main">
         <?php include('../elements/header.php') ?>
         <div class="content">
@@ -37,30 +33,35 @@ $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
                         <tr>
                             <th>Placa</th>
                             <th>Modelo</th>
-                            <th>Marca</th>
-                            <th>Ano</th>
+                            <th>Eixos</th>
+                            <th>Litragem (L)</th>
+                            <th>Observação</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($veiculos)): ?>
-                            <tr>
-                                <td colspan="5">Nenhum veículo encontrado.</td>
-                            </tr>
+                            <tr><td colspan="6">Nenhum veículo encontrado.</td></tr>
                         <?php else: ?>
                             <?php foreach ($veiculos as $veiculo): ?>
-                            <tr>
-                                <td data-label="Placa"><?= htmlspecialchars($veiculo->placa) ?></td>
-                                <td data-label="Modelo"><?= htmlspecialchars($veiculo->modelo) ?></td>
-                                <td data-label="Marca"><?= htmlspecialchars($veiculo->marca) ?></td>
-                                <td data-label="Ano"><?= htmlspecialchars($veiculo->ano) ?></td>
-                                <td data-label="Ações">
-                                    <div class="actions">
-                                        <button class="btn-icon btn-view" title="Editar">✏️</button>
-                                        <button class="btn-icon btn-deny" title="Excluir">🗑️</button>
-                                    </div>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <form action="actions/veiculo_actions.php" method="POST">
+                                        <input type="hidden" name="action" value="update">
+                                        <input type="hidden" name="idveiculo" value="<?= $veiculo->idveiculo ?>">
+                                        
+                                        <td data-label="Placa"><input type="text" name="placa" value="<?= htmlspecialchars($veiculo->placa) ?>" required></td>
+                                        <td data-label="Modelo"><input type="text" name="modelo" value="<?= htmlspecialchars($veiculo->modelo) ?>" required></td>
+                                        <td data-label="Eixos"><input type="number" name="eixos" value="<?= htmlspecialchars($veiculo->eixos) ?>" required></td>
+                                        <td data-label="Litragem"><input type="number" step="0.01" name="litragem" value="<?= htmlspecialchars($veiculo->litragem) ?>" required></td>
+                                        <td data-label="Observação"><input type="text" name="observacao" value="<?= htmlspecialchars($veiculo->observacao) ?>"></td>
+                                        <td data-label="Ações">
+                                            <div class="actions">
+                                                <button type="submit" class="btn-icon btn-approve" title="Salvar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#2563eb" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7l-2-4zm-1 16h-8v-4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4zm-1-10H9V5h6v4z"/></svg></button>
+                                                <a href="actions/veiculo_actions.php?action=delete&id=<?= $veiculo->idveiculo ?>" class="btn-icon btn-deny" title="Excluir" onclick="return confirm('Tem certeza?')"><svg class="icon" viewBox="0 0 24 24" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></a>
+                                            </div>
+                                        </td>
+                                    </form>
+                                </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
@@ -77,28 +78,11 @@ $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
             </div>
             <form action="actions/veiculo_actions.php" method="POST">
                 <input type="hidden" name="action" value="create">
-                
-                <div class="form-group">
-                    <label for="placa">Placa</label>
-                    <input type="text" id="placa" name="placa" required>
-                </div>
-                <div class="form-group">
-                    <label for="marca">Marca</label>
-                    <input type="text" id="marca" name="marca" required>
-                </div>
-                 <div class="form-group">
-                    <label for="modelo">Modelo</label>
-                    <input type="text" id="modelo" name="modelo" required>
-                </div>
-                <div class="form-group">
-                    <label for="ano">Ano</label>
-                    <input type="number" id="ano" name="ano" required>
-                </div>
-                <div class="form-group">
-                    <label for="capacidade_tanque">Capacidade do Tanque (Litros)</label>
-                    <input type="number" id="capacidade_tanque" name="capacidade_tanque" required>
-                </div>
-                
+                <div class="form-group"><label for="placa">Placa</label><input type="text" id="placa" name="placa" required></div>
+                <div class="form-group"><label for="modelo">Modelo</label><input type="text" id="modelo" name="modelo" required></div>
+                <div class="form-group"><label for="eixos">Nº de Eixos</label><input type="number" id="eixos" name="eixos" required></div>
+                <div class="form-group"><label for="litragem">Litragem do Tanque</label><input type="number" step="0.01" id="litragem" name="litragem" required></div>
+                <div class="form-group"><label for="observacao">Observação</label><input type="text" id="observacao" name="observacao"></div>
                 <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
                     <button type="button" class="btn" onclick="closeModal('addVeiculoModal')">Cancelar</button>
                     <button type="submit" class="btn primary">Salvar Veículo</button>
@@ -108,19 +92,9 @@ $veiculos = $veiculoRepo->findByTransportadora($idtransportadora);
     </div>
 
 <script>
-    function openAddModal() {
-        document.getElementById('addVeiculoModal').style.display = 'block';
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = "none";
-        }
-    }
+    function openAddModal() { document.getElementById('addVeiculoModal').style.display = 'block'; }
+    function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+    window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = "none"; } }
 </script>
 </body>
 </html>
