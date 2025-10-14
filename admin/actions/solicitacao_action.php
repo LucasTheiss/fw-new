@@ -2,33 +2,28 @@
 require_once '../../autoload.php';
 require_once '../acesso.php';
 
-use src\Repository\SolicitacaoRepository;
+use src\Service\SolicitacaoService;
 
 $action = $_GET['action'] ?? null;
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$id = (int)($_GET['id'] ?? 0);
 
 if (!$action || $id <= 0) {
     header('Location: ../solicitacoes.php');
     exit;
 }
 
-$solicitacaoRepo = new SolicitacaoRepository();
-$success = false;
+$service = new SolicitacaoService();
 
-if ($action === 'approve') {
-    $success = $solicitacaoRepo->approve($id);
-    $_SESSION['alert'] = [
-        'title' => $success ? 'Sucesso!' : 'Erro!',
-        'text' => $success ? 'Solicitação aprovada com sucesso.' : 'Falha ao aprovar a solicitação.',
-        'icon' => $success ? 'success' : 'error',
-    ];
-} elseif ($action === 'deny') {
-    $success = $solicitacaoRepo->deny($id);
-    $_SESSION['alert'] = [
-        'title' => $success ? 'Sucesso!' : 'Erro!',
-        'text' => $success ? 'Solicitação negada com sucesso.' : 'Falha ao negar a solicitação.',
-        'icon' => $success ? 'success' : 'error',
-    ];
+try {
+    if ($action === 'approve') {
+        $service->aprovar($id);
+        $_SESSION['alert'] = ['title' => 'Sucesso!', 'text' => 'Solicitação aprovada.', 'icon' => 'success'];
+    } elseif ($action === 'deny') {
+        $service->negar($id);
+        $_SESSION['alert'] = ['title' => 'Sucesso!', 'text' => 'Solicitação negada/revogada.', 'icon' => 'success'];
+    }
+} catch (Exception $e) {
+    $_SESSION['alert'] = ['title' => 'Erro!', 'text' => $e->getMessage(), 'icon' => 'error'];
 }
 
 header('Location: ../solicitacoes.php');
