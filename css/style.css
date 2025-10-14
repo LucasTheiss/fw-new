@@ -266,3 +266,12 @@ tbody tr:hover {
 tbody tr:last-child td {
     border-bottom: none;
 }
+
+svg.icon {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
