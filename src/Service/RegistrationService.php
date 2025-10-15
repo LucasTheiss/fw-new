@@ -15,7 +15,6 @@ class RegistrationService
 
     public function registerFromForm(array $formData): bool
     {
-        // Validação básica para garantir que campos essenciais não estão vazios
         if (empty($formData['nomeEmpresa']) || empty($formData['cnpj']) || empty($formData['email']) || empty($formData['senha'])) {
             $_SESSION['alert'] = ['title' => 'Erro!', 'text' => 'Por favor, preencha todos os campos obrigatórios.', 'icon' => 'warning'];
             return false;
@@ -35,7 +34,7 @@ class RegistrationService
         $solicitacao->cpf = preg_replace('/\D/', '', $formData['cpf']);
         $solicitacao->senha = password_hash($formData['senha'], PASSWORD_DEFAULT);
         $solicitacao->telefoneUsuario = $formData['telefonePessoal'];
-        $solicitacao->status = 0; // Pendente
+        $solicitacao->status = 0; 
 
         return $this->solicitacaoRepo->create($solicitacao);
     }

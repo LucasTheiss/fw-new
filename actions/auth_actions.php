@@ -16,22 +16,22 @@ if (!$action) {
 switch ($action) {
     case 'login':
         $authService = new AuthService();
-        $userData = $authService->attemptLogin($_POST['email'] ?? '', $_POST['senha'] ?? '');
+        $user = $authService->attemptLogin($_POST['email'] ?? '', $_POST['senha'] ?? '');
 
-        if ($userData) {
-            $_SESSION['user_id'] = $userData['idusuario'];
-            $_SESSION['user_name'] = $userData['nome'];
-            $_SESSION['user_role'] = $userData['role']; 
-            $_SESSION['id_transportadora'] = $userData['idtransportadora'] ?? 0;
+        if ($user) {
+            $_SESSION['user_id'] = $user->idusuario;
+            $_SESSION['user_name'] = $user->nome;
+            $_SESSION['user_role'] = $user->role; 
+            $_SESSION['id_transportadora'] = $user->idtransportadora ?? 0;
             
-            if ($userData['role'] != 'admin'){
-                if ($userData['role'] == 'motorista'){
-                    $userData['role'] = 'driver';
-                } else if ($userData['role'] == 'gerente'){
-                    $userData['role'] = 'manager';
+            if ($user->role != 'admin'){
+                if ($user->role == 'motorista'){
+                    $redirect = 'driver';
+                } else if ($user->role == 'gerente'){
+                    $redirect = 'manager';
                 }
             }
-            header('Location: /FW/' . $userData['role'] . '/');
+            header('Location: /FW/' . $redirect . '/');
             exit;
         }
 
@@ -44,7 +44,7 @@ switch ($action) {
         $success = $registrationService->registerFromForm($_POST);
 
         if ($success) {
-            unset($_SESSION['form_data']); // Limpa os dados do formulário da sessão
+            unset($_SESSION['form_data']);
             $_SESSION['alert'] = ['title' => 'Sucesso!', 'text' => 'Solicitação de cadastro enviada com sucesso! Aguarde a aprovação.', 'icon' => 'success'];
             header('Location: /FW/login.php');
         } else {
