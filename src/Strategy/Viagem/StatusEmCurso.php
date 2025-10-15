@@ -12,11 +12,11 @@ class StatusEmCurso implements StatusViagemInterface {
 
     public function finalizar(Viagem $viagem): void {
         $repo = new ViagemRepository();
-        $repo->updateStatus($viagem->idviagem, 'finalizada');
+        $repo->updateStatus($viagem->idviagem, 2);
     }
 
     public function cancelar(Viagem $viagem): void {
         $repo = new ViagemRepository();
-        $repo->updateStatus($viagem->idviagem, 'cancelada');
+        $repo->updateStatus($viagem->idviagem, 3);
     }
 }

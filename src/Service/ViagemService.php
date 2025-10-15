@@ -2,7 +2,7 @@
 namespace src\Service;
 
 use src\Model\Viagem;
-use src\Repository\ViagemRepository;
+use src\Repository\ViagemRepository; 
 use src\Strategy\Viagem\StatusAgendada;
 use src\Strategy\Viagem\StatusEmCurso;
 use src\Strategy\Viagem\StatusFinalizada;
@@ -17,27 +17,30 @@ class ViagemService {
     }
 
     private function getStrategy(Viagem $viagem) {
-        return match ($viagem->status) {
-            'agendada' => new StatusAgendada(),
-            'em_curso' => new StatusEmCurso(),
-            'finalizada' => new StatusFinalizada(),
-            'cancelada' => new StatusCancelada(),
+        return match ((int)$viagem->status) {
+            ViagemRepository::STATUS_AGENDADA => new StatusAgendada(),
+            ViagemRepository::STATUS_EM_CURSO => new StatusEmCurso(),
+            ViagemRepository::STATUS_FINALIZADA => new StatusFinalizada(),
+            ViagemRepository::STATUS_CANCELADA => new StatusCancelada(),
             default => throw new Exception("Status da viagem desconhecido."),
         };
     }
 
     public function iniciar(int $idviagem): void {
         $viagem = $this->viagemRepo->findById($idviagem);
+        if (!$viagem) throw new Exception("Viagem não encontrada.");
         $this->getStrategy($viagem)->iniciar($viagem);
     }
 
     public function finalizar(int $idviagem): void {
         $viagem = $this->viagemRepo->findById($idviagem);
+        if (!$viagem) throw new Exception("Viagem não encontrada.");
         $this->getStrategy($viagem)->finalizar($viagem);
     }
 
     public function cancelar(int $idviagem): void {
         $viagem = $this->viagemRepo->findById($idviagem);
+        if (!$viagem) throw new Exception("Viagem não encontrada.");
         $this->getStrategy($viagem)->cancelar($viagem);
     }
 }

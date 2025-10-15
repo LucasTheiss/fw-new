@@ -11,4 +11,6 @@ abstract class User
     public $cpf;
     public $gerente = 0;
     public $adm = 0;
+    
+    public $role; 
 }

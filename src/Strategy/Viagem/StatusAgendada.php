@@ -8,7 +8,7 @@ use Exception;
 class StatusAgendada implements StatusViagemInterface {
     public function iniciar(Viagem $viagem): void {
         $repo = new ViagemRepository();
-        $repo->updateStatus($viagem->idviagem, ViagemRepository::STATUS_EM_CURSO);
+        $repo->updateStatus($viagem->idviagem, 1);
     }
 
     public function finalizar(Viagem $viagem): void {
@@ -17,6 +17,6 @@ class StatusAgendada implements StatusViagemInterface {
 
     public function cancelar(Viagem $viagem): void {
         $repo = new ViagemRepository();
-        $repo->updateStatus($viagem->idviagem, ViagemRepository::STATUS_CANCELADA);
+        $repo->updateStatus($viagem->idviagem, 3);
     }
 }

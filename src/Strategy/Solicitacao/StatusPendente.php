@@ -12,6 +12,6 @@ class StatusPendente implements StatusSolicitacaoInterface {
 
     public function negar(Solicitacao $solicitacao): void {
         $repo = new SolicitacaoRepository();
-        $repo->updateStatus($solicitacao->idsolicitacao, 2); // 2 = Negado
+        $repo->updateStatus($solicitacao->idsolicitacao, 2);
     }
 }
