@@ -13,17 +13,16 @@ $integrantes = $usuarioRepo->findIntegrantesByTransportadora($idtransportadora);
     <title>Integrantes - Gerente</title>
     <?php include_once("../elements/head.html") ?>
     <style>
-        /* Estilo para alinhar inputs e botões na tabela */
         .table-form-row {
             display: flex;
             align-items: center;
         }
         .table-form-row input {
             flex-grow: 1;
-            margin-right: 5px; /* Espaço entre inputs */
+            margin-right: 5px; 
         }
         .table-form-row .actions {
-            white-space: nowrap; /* Impede que os botões quebrem linha */
+            white-space: nowrap;
         }
     </style>
 </head>

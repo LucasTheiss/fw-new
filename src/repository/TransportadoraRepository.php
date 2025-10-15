@@ -40,12 +40,6 @@ class TransportadoraRepository
         return $stmt->execute(['status' => $status, 'id' => $id]);
     }
 
-        /**
-     * Busca todos os usuários (motoristas) associados a uma transportadora.
-     *
-     * @param int $idtransportadora ID da transportadora.
-     * @return array Lista de usuários.
-     */
     public function findIntegrantesByTransportadora(int $idtransportadora): array
     {
         $sql = "SELECT idusuario, nome, email, telefone, cpf FROM usuario WHERE idtransportadora = ? AND gerente = 0 ORDER BY nome";

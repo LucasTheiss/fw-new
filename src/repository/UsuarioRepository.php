@@ -55,7 +55,7 @@ class UsuarioRepository
         $this->conn->begin_transaction();
         try {
             $hashed_password = password_hash($user->senha, PASSWORD_DEFAULT);
-            $gerente_flag = 0; // Sempre 0 para motorista
+            $gerente_flag = 0; 
             $admin_flag = 0;
 
             $stmt_user = $this->conn->prepare("INSERT INTO usuario (email, nome, senha, telefone, cpf, gerente, adm) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -80,7 +80,6 @@ class UsuarioRepository
 
     public function update(User $user): bool
     {
-        // Se uma nova senha for fornecida, criptografe-a. Caso contrário, mantenha a antiga.
         if (!empty($user->senha)) {
             $hashed_password = password_hash($user->senha, PASSWORD_DEFAULT);
             $sql = "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, senha = ? WHERE idusuario = ?";
@@ -97,14 +96,12 @@ class UsuarioRepository
 
     public function delete(int $idusuario, int $idtransportadora): bool
     {
-        // Garante que só se pode deletar um usuário da própria transportadora
         $this->conn->begin_transaction();
         try {
             $stmt_link = $this->conn->prepare("DELETE FROM transportadora_usuario WHERE idusuario = ? AND idtransportadora = ?");
             $stmt_link->bind_param("ii", $idusuario, $idtransportadora);
             $stmt_link->execute();
 
-            // Verifica se o vínculo foi realmente removido antes de deletar o usuário
             if ($stmt_link->affected_rows > 0) {
                 $stmt_user = $this->conn->prepare("DELETE FROM usuario WHERE idusuario = ?");
                 $stmt_user->bind_param("i", $idusuario);

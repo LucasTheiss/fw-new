@@ -25,21 +25,21 @@ $baseUrl = "/FW";
                 <li><a href="<?= $baseUrl ?>/motorista/index.php">Início</a></li>
                 <li><a href="<?= $baseUrl ?>/motorista/postos.php">Checar Postos</a></li>
                 <li><a href="<?= $baseUrl ?>/suporte.php">Suporte</a></li>
-                <li><a href="<?= $baseUrl ?>/logout.php">Sair</a></li>
+                <li><a href="<?= $baseUrl ?>/actions/auth_actions.php?action=logout">Sair</a></li>
 
             <?php elseif (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'gerente'): ?>
                 <li><a href="<?= $baseUrl ?>/gerente/index.php">Dashboard</a></li>
                 <li><a href="<?= $baseUrl ?>/gerente/integrantes.php">Integrantes</a></li>
                 <li><a href="<?= $baseUrl ?>/gerente/veiculos.php">Veículos</a></li>
                 <li><a href="<?= $baseUrl ?>/gerente/viagens.php">Viagens</a></li>
-                <li><a href="<?= $baseUrl ?>/logout.php">Sair</a></li>
+                <li><a href="<?= $baseUrl ?>/actions/auth_actions.php?action=logout">Sair</a></li>
 
             <?php elseif (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                 <li><a href="<?= $baseUrl ?>/admin/index.php">Dashboard</a></li>
                 <li><a href="<?= $baseUrl ?>/admin/solicitacoes.php">Solicitações</a></li>
                 <li><a href="<?= $baseUrl ?>/admin/postos.php">Postos</a></li>
                 <li><a href="<?= $baseUrl ?>/admin/denuncias.php">Denúncias</a></li>
-                <li><a href="<?= $baseUrl ?>/logout.php">Sair</a></li>
+                <li><a href="<?= $baseUrl ?>/actions/auth_actions.php?action=logout">Sair</a></li>
             <?php endif; ?>
 
             <?php if (isset($_SESSION["user_name"])): ?>

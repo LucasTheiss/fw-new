@@ -45,7 +45,6 @@ $denuncias = $denunciaRepo->findAllWithDetails();
                         <?php else: ?>
                             <?php foreach ($denuncias as $denuncia): ?>
                             <tr>
-                                <!-- Corrigido para aceder às propriedades do objeto -->
                                 <td data-label="Posto"><?= htmlspecialchars($denuncia->titulo) ?></td>
                                 <td data-label="Motivo"><?= htmlspecialchars($denuncia->motivo) ?></td>
                                 <td data-label="Data"><?= date('d/m/Y', strtotime($denuncia->data_criacao)) ?></td>

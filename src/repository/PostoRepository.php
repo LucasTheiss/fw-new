@@ -75,18 +75,15 @@ class PostoRepository {
     }
     
     public function saveCombustivel(\src\Model\Combustivel $combustivel) {
-        // Verifica se já existe
         $stmt_check = $this->conn->prepare("SELECT idcombustivel FROM combustivel WHERE idposto = ? AND tipo = ?");
         $stmt_check->bind_param("ii", $combustivel->idposto, $combustivel->tipo);
         $stmt_check->execute();
         $result = $stmt_check->get_result();
 
         if ($result->num_rows > 0) {
-            // Atualiza
             $stmt = $this->conn->prepare("UPDATE combustivel SET preco = ? WHERE idposto = ? AND tipo = ?");
             $stmt->bind_param("dii", $combustivel->preco, $combustivel->idposto, $combustivel->tipo);
         } else {
-            // Insere
             $stmt = $this->conn->prepare("INSERT INTO combustivel (idposto, preco, tipo) VALUES (?, ?, ?)");
             $stmt->bind_param("idi", $combustivel->idposto, $combustivel->preco, $combustivel->tipo);
         }

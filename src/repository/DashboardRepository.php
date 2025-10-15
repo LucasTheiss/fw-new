@@ -62,21 +62,18 @@ class DashboardRepository {
     public function getManagerStats(int $idtransportadora) {
         $stats = [];
 
-        // Total de Veículos da transportadora
         $stmt_veiculos = $this->conn->prepare("SELECT COUNT(*) AS total FROM veiculo WHERE idtransportadora = ?");
         $stmt_veiculos->bind_param("i", $idtransportadora);
         $stmt_veiculos->execute();
         $result_veiculos = $stmt_veiculos->get_result()->fetch_assoc();
         $stats['totalVeiculos'] = (int)$result_veiculos['total'];
 
-        // Total de Motoristas (usuários que não são gerentes) da transportadora
         $stmt_motoristas = $this->conn->prepare("SELECT COUNT(*) AS total FROM transportadora_usuario tu JOIN usuario ON tu.idusuario = usuario.idusuario  WHERE idtransportadora = ? AND gerente = 0");
         $stmt_motoristas->bind_param("i", $idtransportadora);
         $stmt_motoristas->execute();
         $result_motoristas = $stmt_motoristas->get_result()->fetch_assoc();
         $stats['totalMotoristas'] = (int)$result_motoristas['total'];
 
-        // Total de Viagens da transportadora
         $stmt_viagens = $this->conn->prepare(
             "SELECT COUNT(v.idviagem) AS total FROM viagem v
              JOIN usuario u ON v.idusuario = u.idusuario JOIN transportadora_usuario tu ON u.idusuario = tu.idusuario

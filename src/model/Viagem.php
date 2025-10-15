@@ -19,5 +19,5 @@ class Viagem
     public $carga;
     public $peso;
     public $obs;
-    public $status; // TINYINT: 0=Agendada, 1=Em Curso, 2=Finalizada, 3=Cancelada
+    public $status;
 }

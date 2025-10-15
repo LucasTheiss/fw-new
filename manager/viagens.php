@@ -120,7 +120,6 @@ function getStatusText(int $status): string {
     function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
     window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = "none"; } }
 
-    // Função para buscar coordenadas a partir de um endereço
     async function getCoords(endereco, latInput, lonInput) {
         if (endereco.value.trim() === '') return;
         try {

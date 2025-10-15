@@ -77,7 +77,6 @@ class VeiculoRepository
 
     public function delete(int $idveiculo, int $idtransportadora): bool
     {
-        // A condição `idtransportadora` garante que um gerente só possa deletar seus próprios veículos
         $sql = "DELETE FROM veiculo WHERE idveiculo = ? AND idtransportadora = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $idveiculo, $idtransportadora);

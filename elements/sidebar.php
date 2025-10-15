@@ -56,7 +56,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'motorista') {
     </nav>
     
     <div class="sidebar-footer">
-        <a href="/FW/logout.php" class="sidebar-nav-link logout-link">
+        <a href="/FW/actions/auth_actions.php?action=logout" class="sidebar-nav-link logout-link">
             Sair
         </a>
     </div>

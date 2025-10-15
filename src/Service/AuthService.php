@@ -14,10 +14,6 @@ class AuthService
         $this->userRepository = new UsuarioRepository();
     }
 
-    /**
-     * Tenta autenticar um usuário.
-     * @return User|null Retorna um objeto (Admin, Gerente, Motorista) ou null se a autenticação falhar.
-     */
     public function attemptLogin(string $email, string $senha): ?User
     {
         $user_data = $this->userRepository->findByEmail($email);

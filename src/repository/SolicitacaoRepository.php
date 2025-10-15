@@ -50,7 +50,6 @@ class SolicitacaoRepository {
     public function executarAprovacao(Solicitacao $solicitacao): bool {
         $this->conn->begin_transaction();
         try {
-            // Lógica de inserir usuário, transportadora e vínculo
             $stmt_user = $this->conn->prepare("INSERT INTO usuario(email, nome, senha, telefone, cpf, gerente) VALUES(?, ?, ?, ?, ?, 1)");
             $stmt_user->bind_param("sssss", $solicitacao->emailUsuario, $solicitacao->nomeUsuario, $solicitacao->senha, $solicitacao->telefoneUsuario, $solicitacao->cpf);
             $stmt_user->execute();
@@ -67,7 +66,7 @@ class SolicitacaoRepository {
             $stmt_link->bind_param("iis", $idusuario, $idtransportadora, $data);
             $stmt_link->execute();
 
-            $this->updateStatus($solicitacao->idsolicitacao, 1); // Aprovado
+            $this->updateStatus($solicitacao->idsolicitacao, 1); 
             
             $this->conn->commit();
             return true;
@@ -80,7 +79,6 @@ class SolicitacaoRepository {
     public function executarRevogacao(Solicitacao $solicitacao): bool {
         $this->conn->begin_transaction();
         try {
-            // Lógica para deletar usuário, transportadora, etc.
             $stmt_ids = $this->conn->prepare("SELECT idtransportadora FROM transportadora WHERE cnpj = ?");
             $stmt_ids->bind_param("s", $solicitacao->cnpj);
             $stmt_ids->execute();
@@ -90,7 +88,7 @@ class SolicitacaoRepository {
                 // ... (toda a lógica de delete em cascata)
             }
             
-            $this->updateStatus($solicitacao->idsolicitacao, 2); // Negado
+            $this->updateStatus($solicitacao->idsolicitacao, 2); 
 
             $this->conn->commit();
             return true;

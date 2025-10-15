@@ -10,5 +10,5 @@ class Transportadora
     public $endereco;
     public $telefone;
     public $email;
-    public $status; // pendente, aprovado, negado
+    public $status;
 }

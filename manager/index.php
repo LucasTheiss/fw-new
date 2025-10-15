@@ -4,7 +4,6 @@ require_once 'acesso.php';
 
 use src\Repository\DashboardRepository;
 
-// A variável $idtransportadora já está disponível a partir do acesso.php
 $dashboardRepo = new DashboardRepository();
 $stats = $dashboardRepo->getManagerStats($idtransportadora);
 ?>
@@ -44,7 +43,7 @@ $stats = $dashboardRepo->getManagerStats($idtransportadora);
                     </div>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 </body>
 </html>

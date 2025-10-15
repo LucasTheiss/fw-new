@@ -62,8 +62,6 @@ class DenunciaRepository {
             $stmt1->bind_param("i", $iddenuncia);
             $stmt1->execute();
             
-            // Aqui você deveria adicionar a lógica para apagar os arquivos físicos do servidor se necessário
-
             $stmt2 = $this->conn->prepare("DELETE FROM denuncia WHERE iddenuncia = ?");
             $stmt2->bind_param("i", $iddenuncia);
             $stmt2->execute();

@@ -5,7 +5,7 @@ require_once 'acesso.php';
 use src\Repository\SolicitacaoRepository;
 
 $solicitacaoRepo = new SolicitacaoRepository();
-$solicitacoes = $solicitacaoRepo->findAll(); // O método já busca todos os dados necessários
+$solicitacoes = $solicitacaoRepo->findAll(); 
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -109,7 +109,6 @@ $solicitacoes = $solicitacaoRepo->findAll(); // O método já busca todos os dad
 
 <script>
     function openDetailsModal(solicitacao) {
-        // Preenche os dados da empresa
         document.getElementById('modal-nomeTransportadora').textContent = solicitacao.nomeTransportadora;
         document.getElementById('modal-cnpj').textContent = formatCNPJ(solicitacao.cnpj);
         document.getElementById('modal-telefoneEmpresa').textContent = formatTelefone(solicitacao.telefoneEmpresa);
@@ -118,14 +117,12 @@ $solicitacoes = $solicitacaoRepo->findAll(); // O método já busca todos os dad
         document.getElementById('modal-cidade').textContent = solicitacao.cidade;
         document.getElementById('modal-estado').textContent = solicitacao.estado;
 
-        // Preenche os dados do gerente
         document.getElementById('modal-nomeUsuario').textContent = solicitacao.nomeUsuario;
         document.getElementById('modal-sobrenome').textContent = solicitacao.sobrenome;
         document.getElementById('modal-emailUsuario').textContent = solicitacao.emailUsuario;
         document.getElementById('modal-cpf').textContent = formatCPF(solicitacao.cpf);
         document.getElementById('modal-telefoneUsuario').textContent = formatTelefone(solicitacao.telefoneUsuario);
         
-        // Exibe o modal
         document.getElementById('detailsModal').style.display = 'block';
     }
 
@@ -133,7 +130,6 @@ $solicitacoes = $solicitacaoRepo->findAll(); // O método já busca todos os dad
         document.getElementById(modalId).style.display = 'none';
     }
 
-    // Fecha o modal se o usuário clicar fora do conteúdo
     window.onclick = function(event) {
         const modal = document.getElementById('detailsModal');
         if (event.target == modal) {
@@ -141,7 +137,6 @@ $solicitacoes = $solicitacaoRepo->findAll(); // O método já busca todos os dad
         }
     }
 
-    // Funções de formatação para melhor visualização
     function formatCPF(cpf) {
         return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     }
